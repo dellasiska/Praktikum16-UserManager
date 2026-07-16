@@ -5,7 +5,25 @@
       👥 Daftar User
     </h1>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Loading -->
+    <div
+      v-if="loading"
+      class="flex flex-col items-center justify-center py-10"
+    >
+      <div
+        class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"
+      ></div>
+
+      <p class="mt-4 text-gray-500">
+        Memuat data pengguna...
+      </p>
+    </div>
+
+    <!-- Data User -->
+    <div
+      v-else
+      class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
 
       <div
         v-for="user in users"
@@ -64,13 +82,18 @@ import axios from 'axios'
 import Layout from '../components/Layout.vue'
 
 const users = ref([])
+const loading = ref(true)
 
 const getUsers = async () => {
+  loading.value = true
+
   const response = await axios.get(
     'https://6a4fb90bf45d5352b611ce83.mockapi.io/users'
   )
 
   users.value = response.data
+
+  loading.value = false
 }
 
 const deleteUser = async (id) => {
@@ -85,7 +108,7 @@ const deleteUser = async (id) => {
 
   alert('User berhasil dihapus!')
 
-  getUsers()
+  await getUsers()
 }
 
 onMounted(() => {
